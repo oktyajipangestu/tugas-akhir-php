@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use Illuminate\Support\Facades\DB;
+use App\tbl_biodata;
 
 class Biodata extends Controller
 {
@@ -19,5 +20,33 @@ class Biodata extends Controller
             $res['message'] = "Empty!";
             return response($res);
         }
+    }
+
+
+    public function store(Request $request) {
+        $this->validate($request, [
+            'file' => 'required|max:2048'
+        ]);
+
+        $file = $request->file('file');
+        $nama_file = time()."_".$file->getClientOriginalName();
+
+        $tujuan_upload = 'data_file';
+
+        if($file->move($tujuan_upload,$nama_file)){
+            $data = tbl_biodata::create(
+                [
+                    'nama' => $request->nama,
+                    'no_hp' => $request->no_hp,
+                    'alamat' => $request->alamat,
+                    'hobi' => $request->hobi,
+                    'foto' => $nama_file
+                ]
+            );
+            $res['message'] = 'success !';
+            $res['values'] = $data;
+            return response($res);
+        }
+
     }
 }
