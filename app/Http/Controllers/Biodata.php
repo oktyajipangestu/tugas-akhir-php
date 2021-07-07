@@ -111,4 +111,17 @@ class Biodata extends Controller
 
         }
     }
+
+
+    public function getDetail($id) {
+        $data = DB::table('tbl_biodata')->where('id',$id)->get();
+        if(count($data) > 0) {
+            $res['message'] = "Success!";
+            $res['value'] = $data;
+            return response($res);
+        } else {
+            $res['message'] = "Empty!";
+            return response($res);
+        }
+    }
 }
