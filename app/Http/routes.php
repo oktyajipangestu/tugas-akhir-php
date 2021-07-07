@@ -17,3 +17,4 @@ Route::get('/', function () {
 
 Route::get('/getData', 'Biodata@getData');
 Route::post('/pushData', 'Biodata@store');
+Route::post('/setData', 'Biodata@update');

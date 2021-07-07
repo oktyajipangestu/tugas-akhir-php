@@ -49,4 +49,49 @@ class Biodata extends Controller
         }
 
     }
+
+
+    public function update(Request $request) {
+        if(!empty($request->file)){
+            $this->validate($request, [
+                'file' => 'required|max:2028'
+            ]);
+
+            $file = $request->file('file');
+            $nama_file = time()."_".$file->getClientOriginalName();
+
+            $tujuan_upload = 'data_file';
+
+            $file->move($tujuan_upload,$nama_file);
+            $data = DB::table('tbl_biodata')->where('id',$request->id)->get();
+
+            foreach($data as $karyawan) {
+                @unlink(public_path('data_file/'.$karyawan->gamber));
+                $ket = DB::table('tbl_biodata')->where('id',$request->id)->update([
+                    'nama' => $request->nama,
+                    'no_hp' => $request->no_hp,
+                    'alamat' => $request->alamat,
+                    'hobi' => $request->hobi,
+                    'foto' => $nama_file
+                ]);
+                $res['message'] = 'success !';
+                $res['values'] = $ket;
+                return response($res);
+            }
+        } else {
+            $data = DB::table('tbl_biodata')->where('id',$request->id)->get();
+
+            foreach($data as $karyawan) {
+                $ket = DB::table('tbl_biodata')->where('id',$request->id)->update([
+                    'nama' => $request->nama,
+                    'no_hp' => $request->no_hp,
+                    'alamat' => $request->alamat,
+                    'hobi' => $request->hobi
+                ]);
+                $res['message'] = 'success !';
+                $res['values'] = $ket;
+                return response($res);
+            }
+        }
+    }
 }
