@@ -65,8 +65,8 @@ class Biodata extends Controller
             $file->move($tujuan_upload,$nama_file);
             $data = DB::table('tbl_biodata')->where('id',$request->id)->get();
 
-            foreach($data as $karyawan) {
-                @unlink(public_path('data_file/'.$karyawan->gamber));
+            foreach($data as $biodata) {
+                @unlink(public_path('data_file/'.$biodata->gamber));
                 $ket = DB::table('tbl_biodata')->where('id',$request->id)->update([
                     'nama' => $request->nama,
                     'no_hp' => $request->no_hp,
@@ -92,6 +92,23 @@ class Biodata extends Controller
                 $res['values'] = $ket;
                 return response($res);
             }
+        }
+    }
+
+
+    public function delete($id) {
+        $data = DB::table('tbl_biodata')->where('id',$id)->get();
+        foreach( $data as $biodata) {
+            if(file_exists(public_path('data_file/'.$biodata->gambar))) {
+                @unlink(public_path('data_file/'.$biodata->gamber));
+                DB::table('tbl_biodata')->where('id', $id)->delete();
+                $res['message'] = "success!";
+                return response($res);
+            } else {
+                $res['message'] = "Empty !";
+                return response($res);
+            }
+
         }
     }
 }
